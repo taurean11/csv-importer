@@ -1,9 +1,26 @@
-package com.acme.importer.dto;
+package com.acme.importer.entity;
 
+import jakarta.annotation.Nonnull;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "Policy")
 public class Policy {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Integer id;
+
+    @Nonnull
     private String chdrnum;
+
+    @Nonnull
     private String cownnum;
+    
     private String ownerName;
     private String lifcNum;
     private String lifcName;

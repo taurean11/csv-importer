@@ -1,12 +1,25 @@
 package com.acme.importer;
 
-import com.acme.importer.service.PolicyImporter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-public class App {
+import com.acme.importer.service.PolicyOrchestrator;
 
-    public static void main(String[] args) {
+@SpringBootApplication
+public class App  implements CommandLineRunner {
 
-        PolicyImporter importer = new PolicyImporter("./CCimport.txt");
-        importer.doImport();
-    }
+	@Autowired
+	private PolicyOrchestrator policyOrchestrator;
+
+	public static void main(String[] args) {
+		SpringApplication.run(App.class, args);
+	}
+
+	@Override
+	public void run(String... args) throws Exception {
+
+		policyOrchestrator.handlePolicy("./CCimport.txt");
+	}
 }

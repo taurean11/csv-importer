@@ -8,32 +8,41 @@ import java.util.List;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
-import com.acme.importer.dto.Policy;
+import com.acme.importer.entity.Policy;
 
+@Component
 public class PolicyImporter {
 
-    private String fileToImport;
+    private Logger logger = LoggerFactory.getLogger(PolicyOrchestrator.class);
+
     private List<Policy> policiesToStore;
 
-    public PolicyImporter(String fileToImport) {
-        this.fileToImport = fileToImport;
+    public PolicyImporter() {
         policiesToStore = new ArrayList<>();
     }
 
-    public void doImport() {
+    public List<Policy> doImport(String fileToImport) {
 
         CSVFormat csvFormat = CSVFormat.DEFAULT.builder()
                 .setDelimiter("|")
                 .build();
 
         try (CSVParser csvParser = new CSVParser(new FileReader(fileToImport), csvFormat)) {
+
+            logger.info("start processing input file {}", fileToImport);
+
+            int line = 1;
             for (CSVRecord record : csvParser) {
+
                 Policy policy = new Policy();
 
                 // Chdrnum and Cownnum are mandatory
                 if(record.get(0).trim().isBlank() || record.get(1).trim().isBlank()){
-                    System.out.println("warning: mandatory field is empty, skipping");
+                    logger.warn("warning: mandatory field is empty in input file {} line {} : {}, skipping line", fileToImport, line, record);
                     continue;
                 }
 
@@ -46,12 +55,17 @@ public class PolicyImporter {
                 policy.setAgntnum(record.get(6));
                 policy.setMailAddress(record.get(7));
 
-                System.out.println(policy);
+                logger.debug("processed policy: {}", policy);
 
+                line++;
                 policiesToStore.add(policy);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        logger.info("finished processing input file {}", fileToImport);
+
+        return policiesToStore;
     }
 }
