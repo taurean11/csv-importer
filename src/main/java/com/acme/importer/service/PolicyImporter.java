@@ -13,11 +13,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.acme.importer.entity.Policy;
+import com.acme.importer.exception.CsvImporterException;
 
 @Component
 public class PolicyImporter {
 
-    private Logger logger = LoggerFactory.getLogger(PolicyOrchestrator.class);
+    private Logger logger = LoggerFactory.getLogger(PolicyImporter.class);
 
     private List<Policy> policiesToStore;
 
@@ -25,7 +26,7 @@ public class PolicyImporter {
         policiesToStore = new ArrayList<>();
     }
 
-    public List<Policy> doImport(String fileToImport) {
+    public List<Policy> doImport(String fileToImport) throws CsvImporterException {
 
         CSVFormat csvFormat = CSVFormat.DEFAULT.builder()
                 .setDelimiter("|")
@@ -41,7 +42,7 @@ public class PolicyImporter {
                 Policy policy = new Policy();
 
                 // Chdrnum and Cownnum are mandatory
-                if(record.get(0).trim().isBlank() || record.get(1).trim().isBlank()){
+                if(record.size() < 2 || record.get(0).trim().isBlank() || record.get(1).trim().isBlank()){
                     logger.warn("warning: mandatory field is empty in input file {} line {} : {}, skipping line", fileToImport, line, record);
                     continue;
                 }
@@ -61,7 +62,7 @@ public class PolicyImporter {
                 policiesToStore.add(policy);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new CsvImporterException(String.format("could not process import file %s", fileToImport), e);
         }
 
         logger.info("finished processing input file {}", fileToImport);
