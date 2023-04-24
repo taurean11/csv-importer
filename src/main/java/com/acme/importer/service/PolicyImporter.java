@@ -49,12 +49,23 @@ public class PolicyImporter {
 
                 policy.setChdrnum(record.get(0));
                 policy.setCownnum(record.get(1));
-                policy.setOwnerName(record.get(2));
+
+                // leaving ownerName NULL if there are only spaces for it in the input
+                if(!record.get(2).trim().isBlank()){
+                    policy.setOwnerName(record.get(2).trim());
+                }
+
+                // [TODO] decide if these also need to be NULL for only spaces in the input
+                // in the example file they are correct
                 policy.setLifcNum(record.get(3));
-                policy.setLifcName(record.get(4));
+                policy.setLifcName(record.get(4).trim());
                 policy.setAracde(record.get(5));
                 policy.setAgntnum(record.get(6));
-                policy.setMailAddress(record.get(7));
+
+                // leaving mailAddress NULL if there are only spaces for it in the input
+                if(!record.get(7).trim().isBlank()){
+                    policy.setMailAddress(record.get(7).trim());
+                }
 
                 logger.debug("processed policy: {}", policy);
 

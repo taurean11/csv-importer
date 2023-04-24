@@ -8,6 +8,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.acme.importer.entity.InputFileType;
+import com.acme.importer.service.OutPayHeaderOrchestrator;
 import com.acme.importer.service.PolicyOrchestrator;
 import com.acme.importer.validator.CommandLineParamsValidator;
 
@@ -19,6 +20,9 @@ public class App  implements CommandLineRunner {
 
 	@Autowired
 	private PolicyOrchestrator policyOrchestrator;
+
+	@Autowired
+	private OutPayHeaderOrchestrator outpayHeaderOrchestrator;
 
 	private Logger logger = LoggerFactory.getLogger(PolicyOrchestrator.class);
 
@@ -36,7 +40,9 @@ public class App  implements CommandLineRunner {
 		}
 
 		if (args[0].toUpperCase().equals(InputFileType.POLICY.toString())) {
-			policyOrchestrator.handlePolicy(args[1]);
+			policyOrchestrator.handle(args[1]);
+		} else if (args[0].toUpperCase().equals(InputFileType.OUTPAY_HEADER.toString())) {
+			outpayHeaderOrchestrator.handle(args[1]);
 		}
 	}
 }

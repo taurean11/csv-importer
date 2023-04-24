@@ -8,34 +8,34 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.acme.importer.entity.Policy;
+import com.acme.importer.entity.OutPayHeader;
 import com.acme.importer.exception.CsvImporterException;
 
 @Component
-public class PolicyOrchestrator {
+public class OutPayHeaderOrchestrator {
 
     @Autowired
-    private PolicyImporter policyImporter;
+    private OutPayHeaderImporter outPayHeaderImporter;
 
     @Autowired
-    private PolicyService policyService;
+    private OutPayHeaderService outPayHeaderService;
 
-    private Logger logger = LoggerFactory.getLogger(PolicyOrchestrator.class);
+    private Logger logger = LoggerFactory.getLogger(OutPayHeaderOrchestrator.class);
 
     public void handle(String fileToImport) {
 
         logger.info("start importing file {}", fileToImport);
 
-        List<Policy> policiesToStore = new ArrayList<>();
+        List<OutPayHeader> outPayHeadersToStore = new ArrayList<>();
         try {
-            policiesToStore = policyImporter.doImport(fileToImport);
+            outPayHeadersToStore = outPayHeaderImporter.doImport(fileToImport);
         } catch (CsvImporterException e) {
             logger.error(e.getMessage());
             logger.debug(e.getCause().getMessage());
             System.exit(1);
         }
 
-        if (policiesToStore.size() == 0) {
+        if (outPayHeadersToStore.size() == 0) {
             logger.warn("nothing to import after processing input file {}", fileToImport);
             return;
         }
@@ -43,7 +43,7 @@ public class PolicyOrchestrator {
         logger.info("start saving records from file {}", fileToImport);
 
         try {
-            policyService.savePolicies(policiesToStore);
+            outPayHeaderService.saveOutPayHeaders(outPayHeadersToStore);
         } catch (Exception e) {
             logger.error("could not write imported records to the database");
             logger.error(e.getMessage());
