@@ -1,6 +1,5 @@
 package com.acme.importer.service;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -8,9 +7,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -18,6 +14,10 @@ import org.springframework.stereotype.Component;
 import com.acme.importer.entity.Redemption;
 import com.acme.importer.exception.CsvImporterException;
 
+/**
+ * Class responsible for reading and parsing the contents of the received input file
+ * The file is supposed to be a redemption file
+ */
 @Component
 public class RedemptionImporter {
 
@@ -37,6 +37,14 @@ public class RedemptionImporter {
         redemptionsToStore = new ArrayList<>();
     }
 
+    /**
+     * Tries to import the contents of the received input file
+     * The file is supposed to be a redemption file
+     *
+     * @param fileToImport import file path
+     * @return a List of redemptions parsed from the input
+     * @throws CsvImporterException if there's an IOException related to the input file
+     */
     public List<Redemption> doImport(String fileToImport) throws CsvImporterException {
 
         Path path = Paths.get(fileToImport);
@@ -91,7 +99,7 @@ public class RedemptionImporter {
 
     /**
      * Tries to create a Java double value from the received survalue string
-     * 
+     *
      * @param originalSurvalue received survalue, e.g. 3276866.00
      * @return survalue as Java double, or Double.Nan if it cannot be parsed to
      *         double

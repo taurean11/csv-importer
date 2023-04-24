@@ -15,6 +15,10 @@ import org.springframework.stereotype.Component;
 import com.acme.importer.entity.Policy;
 import com.acme.importer.exception.CsvImporterException;
 
+/**
+ * Class responsible for reading and parsing the contents of the received input file
+ * The file is supposed to be a policy file
+ */
 @Component
 public class PolicyImporter {
 
@@ -26,6 +30,14 @@ public class PolicyImporter {
         policiesToStore = new ArrayList<>();
     }
 
+    /**
+     * Tries to import the contents of the received input file
+     * The file is supposed to be a policy file
+     *
+     * @param fileToImport import file path
+     * @return a List of policies parsed from the input
+     * @throws CsvImporterException if there's an IOException related to the input file
+     */
     public List<Policy> doImport(String fileToImport) throws CsvImporterException {
 
         CSVFormat csvFormat = CSVFormat.DEFAULT.builder()

@@ -18,6 +18,10 @@ import org.springframework.stereotype.Component;
 import com.acme.importer.entity.OutPayHeader;
 import com.acme.importer.exception.CsvImporterException;
 
+/**
+ * Class responsible for reading and parsing the contents of the received input file
+ * The file is supposed to be an outpay header file
+ */
 @Component
 public class OutPayHeaderImporter {
 
@@ -29,6 +33,14 @@ public class OutPayHeaderImporter {
         outPayHeadersToStore = new ArrayList<>();
     }
 
+    /**
+     * Tries to import the contents of the received input file
+     * The file is supposed to be an outpay header file
+     *
+     * @param fileToImport import file path
+     * @return a List of policies parsed from the input
+     * @throws CsvImporterException if there's an IOException related to the input file
+     */
     public List<OutPayHeader> doImport(String fileToImport) throws CsvImporterException {
 
         CSVFormat csvFormat = CSVFormat.DEFAULT.builder()

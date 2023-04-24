@@ -1,5 +1,8 @@
 package com.acme.importer.entity;
 
+/**
+ * Enum that lists the possible types of input files
+ */
 public enum InputFileType {
 
     POLICY("policy"),

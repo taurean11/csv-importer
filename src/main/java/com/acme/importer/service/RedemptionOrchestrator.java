@@ -11,6 +11,10 @@ import org.springframework.stereotype.Component;
 import com.acme.importer.entity.Redemption;
 import com.acme.importer.exception.CsvImporterException;
 
+/**
+ * Class responsible for orchestrating the import and persist of an input file
+ * The file is supposed to be a redemption file
+ */
 @Component
 public class RedemptionOrchestrator {
 

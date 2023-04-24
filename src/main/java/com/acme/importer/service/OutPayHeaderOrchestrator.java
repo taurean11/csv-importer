@@ -11,6 +11,10 @@ import org.springframework.stereotype.Component;
 import com.acme.importer.entity.OutPayHeader;
 import com.acme.importer.exception.CsvImporterException;
 
+/**
+ * Class responsible for orchestrating the import and persist of an input file
+ * The file is supposed to be an outpay header file
+ */
 @Component
 public class OutPayHeaderOrchestrator {
 

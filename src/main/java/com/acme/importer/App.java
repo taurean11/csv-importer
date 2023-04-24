@@ -29,12 +29,20 @@ public class App  implements CommandLineRunner {
 
 	private Logger logger = LoggerFactory.getLogger(RedemptionOrchestrator.class);
 
+	/**
+	 * The received command line arguments are:
+	 * type of input file
+	 * file system path (as a string) of the input file
+	 * e.g. "redemption", "./Rimport.txt"
+	 *
+	 * @param args command line arguments
+	 */
 	public static void main(String[] args) {
 		SpringApplication.run(App.class, args);
 	}
 
 	@Override
-	public void run(String... args) throws Exception {
+	public void run(String... args) {
 
 		logger.info("csv importer application has started");
 
