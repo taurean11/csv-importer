@@ -58,7 +58,7 @@ public class OutPayHeaderImporter {
 
                 // printDate is mandatory, can not remain NULL in the database
                 String printDate = normalizeDate(record.get(3), fileToImport, record);
-                if (printDate == "") {
+                if (printDate.isEmpty()) {
                     logger.warn("could not parse mandatory date field in input file {} line {} : {}, skipping line",
                             fileToImport, line, record);
                     continue;
@@ -71,13 +71,13 @@ public class OutPayHeaderImporter {
 
                 // regDate is not mandatory, can remain NULL in the database
                 String regDate = normalizeDate(record.get(7), fileToImport, record);
-                if (regDate != "") {
+                if (!regDate.isEmpty()) {
                     outPayHeader.setRegDate(Date.valueOf(record.get(7)));
                 }
 
                 // benPerct is not mandatory, can remain NULL in the database
                 Double benPercent = normalizePercent(record.get(8), fileToImport, record);
-                if (benPercent != -1.0) {
+                if (!benPercent.equals(Double.NaN)) {
                     outPayHeader.setBenPercent(benPercent);
                 }
 
@@ -106,7 +106,7 @@ public class OutPayHeaderImporter {
      * Tries to create the expected date format yyyy-MM-dd from the received date
      * string
      * The expected format is needed to save the date as java.sql.date
-     * 
+     *
      * @param originalDate received date, e.g. 20201010
      * @param fileToImport import file path
      * @param record       record that contains the benPercent
@@ -131,16 +131,16 @@ public class OutPayHeaderImporter {
 
     /**
      * Tries to create a Java double value from the received benPercent string
-     * 
+     *
      * @param originalPercent received benPercent, e.g. 100.00
      * @param fileToImport    import file path
      * @param record          record that contains the benPercent
-     * @return benPercent value as Java double, or -1 if it cannot be parsed to
-     *         double
+     * @return benPercent value as Java double, or Double.Nan if it cannot be parsed
+     *         to double
      */
     private Double normalizePercent(String originalPercent, String fileToImport, CSVRecord record) {
 
-        Double result = -1.0;
+        Double result = Double.NaN;
 
         try {
             result = Double.valueOf(originalPercent);

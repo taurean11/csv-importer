@@ -18,8 +18,8 @@ public class OutPayHeaderService {
         return (List<OutPayHeader>) outPayHeaderRepository.findAll();
     }
 
-    public OutPayHeader saveOutPayHeader(OutPayHeader outPayHeader) {
-        return outPayHeaderRepository.save(outPayHeader);
+    public void saveOutPayHeader(OutPayHeader outPayHeader) {
+        outPayHeaderRepository.save(outPayHeader);
     }
 
     public void saveOutPayHeaders(List<OutPayHeader> outPayHeaders) {

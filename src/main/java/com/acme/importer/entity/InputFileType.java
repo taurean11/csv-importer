@@ -1,8 +1,10 @@
 package com.acme.importer.entity;
 
 public enum InputFileType {
-    
-    POLICY("policy"), OUTPAY_HEADER("outpay_header");
+
+    POLICY("policy"),
+    OUTPAY_HEADER("outpay_header"),
+    REDEMPTION("redemption");
 
     private final String value;
 

@@ -43,7 +43,7 @@ public class PolicyImporter {
 
                 // Chdrnum and Cownnum are mandatory
                 if(record.size() < 2 || record.get(0).trim().isBlank() || record.get(1).trim().isBlank()){
-                    logger.warn("warning: mandatory field is empty in input file {} line {} : {}, skipping line", fileToImport, line, record);
+                    logger.warn("mandatory field is empty in input file {} line {} : {}, skipping line", fileToImport, line, record);
                     continue;
                 }
 

@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.acme.importer.entity.InputFileType;
 import com.acme.importer.service.OutPayHeaderOrchestrator;
-import com.acme.importer.service.PolicyOrchestrator;
+import com.acme.importer.service.RedemptionOrchestrator;
 import com.acme.importer.validator.CommandLineParamsValidator;
 
 @SpringBootApplication
@@ -19,12 +19,15 @@ public class App  implements CommandLineRunner {
 	CommandLineParamsValidator validator;
 
 	@Autowired
-	private PolicyOrchestrator policyOrchestrator;
+	private RedemptionOrchestrator policyOrchestrator;
 
 	@Autowired
 	private OutPayHeaderOrchestrator outpayHeaderOrchestrator;
 
-	private Logger logger = LoggerFactory.getLogger(PolicyOrchestrator.class);
+	@Autowired
+	private RedemptionOrchestrator redemptionOrchestrator;
+
+	private Logger logger = LoggerFactory.getLogger(RedemptionOrchestrator.class);
 
 	public static void main(String[] args) {
 		SpringApplication.run(App.class, args);
@@ -43,6 +46,8 @@ public class App  implements CommandLineRunner {
 			policyOrchestrator.handle(args[1]);
 		} else if (args[0].toUpperCase().equals(InputFileType.OUTPAY_HEADER.toString())) {
 			outpayHeaderOrchestrator.handle(args[1]);
+		} else if (args[0].toUpperCase().equals(InputFileType.REDEMPTION.toString())) {
+			redemptionOrchestrator.handle(args[1]);
 		}
 	}
 }
