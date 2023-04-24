@@ -9,6 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.acme.importer.entity.InputFileType;
 import com.acme.importer.service.OutPayHeaderOrchestrator;
+import com.acme.importer.service.PolicyOrchestrator;
 import com.acme.importer.service.RedemptionOrchestrator;
 import com.acme.importer.validator.CommandLineParamsValidator;
 
@@ -19,7 +20,7 @@ public class App  implements CommandLineRunner {
 	CommandLineParamsValidator validator;
 
 	@Autowired
-	private RedemptionOrchestrator policyOrchestrator;
+	private PolicyOrchestrator policyOrchestrator;
 
 	@Autowired
 	private OutPayHeaderOrchestrator outpayHeaderOrchestrator;
