@@ -35,7 +35,9 @@ public class PolicyOrchestrator {
             policiesToStore = policyImporter.doImport(fileToImport);
         } catch (CsvImporterException e) {
             logger.error(e.getMessage());
-            logger.debug(e.getCause().getMessage());
+            if (e.getCause() != null) {
+                logger.debug(e.getCause().getMessage());
+            }
             System.exit(1);
         }
 
