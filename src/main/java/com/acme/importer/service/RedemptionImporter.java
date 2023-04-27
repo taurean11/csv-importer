@@ -15,7 +15,8 @@ import com.acme.importer.entity.Redemption;
 import com.acme.importer.exception.CsvImporterException;
 
 /**
- * Class responsible for reading and parsing the contents of the received input file
+ * Class responsible for reading and parsing the contents of the received input
+ * file
  * The file is supposed to be a redemption file
  */
 @Component
@@ -46,7 +47,8 @@ public class RedemptionImporter {
      *
      * @param fileToImport import file path
      * @return a List of redemptions parsed from the input
-     * @throws CsvImporterException if there's an IOException related to the input file
+     * @throws CsvImporterException if there's an IOException related to the input
+     *                              file, or mandatory data is missing from it
      */
     public List<Redemption> doImport(String fileToImport) throws CsvImporterException {
 
@@ -65,36 +67,87 @@ public class RedemptionImporter {
 
             line = inputLines.get(i);
 
-            Redemption redemption = new Redemption();
-
-            // the line must contain enough characters to cover the mandatory fields
-            if (line.length() < SURVALUE_END) {
-                logger.warn("not enough characters in input file {} line number {} : {}, skipping line",
-                        fileToImport, i, line);
+            // skip empty (whitespace-only) lines
+            if (line.trim().isEmpty()) {
+                logger.warn("skipping empty line in input {} line number {}", fileToImport, i + 1);
                 continue;
             }
 
-            redemption.setCompany(line.substring(COMPANY_START, COMPANY_END));
-            redemption.setChdrnum(line.substring(CHDRNUM_START, CHDRNUM_END));
+            Redemption redemption = new Redemption();
 
-            Double normalizedSurvalue = normalizeSurvalue(
-                    line.substring(SURVALUE_START, SURVALUE_END));
+            // validate company
+            if (line.length() < COMPANY_END) {
+                logger.error("not enough characters in input file {} line number {} : {}",
+                        fileToImport, i + 1, line);
+                throw new CsvImporterException(
+                        String.format(
+                                "could not process input file %s (type=redemption) no data for company in line=%s",
+                                fileToImport, line));
+            }
+            String rawCompany = line.substring(COMPANY_START, COMPANY_END);
+            String normalizedCompany = rawCompany.trim();
+            if (normalizedCompany.isEmpty()) {
+                logger.error("mandatory field company is empty in input file {} line number {} : {}",
+                        fileToImport, i + 1, line);
+                throw new CsvImporterException(
+                        String.format(
+                                "could not process input file %s (type=redemption) no data for company in line=%s",
+                                fileToImport, line));
+            } else {
+                redemption.setCompany(normalizedCompany);
+            }
 
-            // survalue is mandatory, can not remain NULL in the database
+            // validate chdrnum
+            if (line.length() < CHDRNUM_END) {
+                logger.error("not enough characters in input file {} line number {} : {}",
+                        fileToImport, i + 1, line);
+                throw new CsvImporterException(
+                        String.format(
+                                "could not process input file %s (type=redemption) no data for chdrnum in line=%s",
+                                fileToImport, line));
+            }
+            String rawChdrnum = line.substring(CHDRNUM_START, CHDRNUM_END);
+            String normalizedChdrnum = rawChdrnum.trim();
+            if (normalizedChdrnum.isEmpty()) {
+                logger.error("mandatory field chdrnum is empty in input file {} line number {} : {}",
+                        fileToImport, i + 1, line);
+                throw new CsvImporterException(
+                        String.format(
+                                "could not process input file %s (type=redemption) no data for chdrnum in line=%s",
+                                fileToImport, line));
+            } else {
+                redemption.setChdrnum(normalizedChdrnum);
+            }
+
+            // validate survalue
+            if (line.length() < SURVALUE_END) {
+                logger.error("not enough characters in input file {} line number {} : {}",
+                        fileToImport, i + 1, line);
+                throw new CsvImporterException(
+                        String.format(
+                                "could not process input file %s (type=redemption) no data for survalue in line=%s",
+                                fileToImport, line));
+            }
+            String rawSurvalue = line.substring(SURVALUE_START, SURVALUE_END);
+            Double normalizedSurvalue = normalizeSurvalue(rawSurvalue);
             if (normalizedSurvalue.equals(Double.NaN)) {
-                logger.warn("could not parse mandatory decimal field in input file {} line {} : {}, skipping line",
-                        fileToImport, i, line);
-                continue;
+                logger.error(
+                        "could not parse mandatory decimal field survalue {} in input file {} line {} : {}",
+                        rawSurvalue, fileToImport, i + 1, line);
+                throw new CsvImporterException(
+                        String.format(
+                                "could not process input file %s (type=redemption) could not parse survalue %s in line=%s",
+                                fileToImport, rawSurvalue, line));
             } else {
                 redemption.setSurvalue(
-                        Double.valueOf(line.substring(SURVALUE_START, SURVALUE_END)));
+                        Double.valueOf(rawSurvalue));
             }
 
             // set optional field currency - it's always HUF
             redemption.setCurrency(currency);
 
             // set optional field validDate if it's provided in the input
-            if(line.length() >= VALIDDATE_END){
+            if (line.length() >= VALIDDATE_END) {
                 redemption.setValidDate(line.substring(VALIDDATE_START, VALIDDATE_END));
             }
 
