@@ -54,6 +54,8 @@ public class RedemptionImporter {
 
         Path path = Paths.get(fileToImport);
 
+        logger.info("start processing input file {}", fileToImport);
+
         List<String> inputLines = new ArrayList<>();
         try {
             inputLines = Files.readAllLines(path);

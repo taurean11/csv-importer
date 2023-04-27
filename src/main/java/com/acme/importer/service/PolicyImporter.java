@@ -37,11 +37,13 @@ public class PolicyImporter {
      * @param fileToImport import file path
      * @return a List of policies parsed from the input
      * @throws CsvImporterException if there's an IOException related to the input
-     *                              file
+     *                              file, or mandatory data is missing from it
      */
     public List<Policy> doImport(String fileToImport) throws CsvImporterException {
 
         Path path = Paths.get(fileToImport);
+
+        logger.info("start processing input file {}", fileToImport);
 
         List<String> inputLines = new ArrayList<>();
         try {
