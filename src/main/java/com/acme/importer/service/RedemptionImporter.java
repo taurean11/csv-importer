@@ -24,14 +24,17 @@ public class RedemptionImporter {
     private Logger logger = LoggerFactory.getLogger(RedemptionImporter.class);
 
     private List<Redemption> redemptionsToStore;
+    private String currency = "HUF";
 
     // input file structure
     private int COMPANY_START = 0;
-    private int COMPANY_LEN = 1;
+    private int COMPANY_END = 1;
     private int CHDRNUM_START = 1;
-    private int CHDRNUM_LEN = 8;
+    private int CHDRNUM_END = 9;
     private int SURVALUE_START = 9;
-    private int SURVALUE_LEN = 15;
+    private int SURVALUE_END = 24;
+    private int VALIDDATE_START = 44;
+    private int VALIDDATE_END = VALIDDATE_START + 10;
 
     public RedemptionImporter() {
         redemptionsToStore = new ArrayList<>();
@@ -65,17 +68,17 @@ public class RedemptionImporter {
             Redemption redemption = new Redemption();
 
             // the line must contain enough characters to cover the mandatory fields
-            if (line.length() < COMPANY_LEN + CHDRNUM_LEN + SURVALUE_LEN) {
+            if (line.length() < SURVALUE_END) {
                 logger.warn("not enough characters in input file {} line number {} : {}, skipping line",
                         fileToImport, i, line);
                 continue;
             }
 
-            redemption.setCompany(line.substring(COMPANY_START, COMPANY_LEN));
-            redemption.setChdrnum(line.substring(CHDRNUM_START, COMPANY_LEN + CHDRNUM_LEN));
+            redemption.setCompany(line.substring(COMPANY_START, COMPANY_END));
+            redemption.setChdrnum(line.substring(CHDRNUM_START, CHDRNUM_END));
 
             Double normalizedSurvalue = normalizeSurvalue(
-                    line.substring(SURVALUE_START, COMPANY_LEN + CHDRNUM_LEN + SURVALUE_LEN));
+                    line.substring(SURVALUE_START, SURVALUE_END));
 
             // survalue is mandatory, can not remain NULL in the database
             if (normalizedSurvalue.equals(Double.NaN)) {
@@ -84,7 +87,15 @@ public class RedemptionImporter {
                 continue;
             } else {
                 redemption.setSurvalue(
-                        Double.valueOf(line.substring(SURVALUE_START, COMPANY_LEN + CHDRNUM_LEN + SURVALUE_LEN)));
+                        Double.valueOf(line.substring(SURVALUE_START, SURVALUE_END)));
+            }
+
+            // set optional field currency - it's always HUF
+            redemption.setCurrency(currency);
+
+            // set optional field validDate if it's provided in the input
+            if(line.length() >= VALIDDATE_END){
+                redemption.setValidDate(line.substring(VALIDDATE_START, VALIDDATE_END));
             }
 
             logger.debug("processed redemption: {}", redemption);
